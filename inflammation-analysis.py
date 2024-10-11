@@ -3,10 +3,38 @@
 
 import argparse
 import os
+import glob
 
 from inflammation import models, views
-from inflammation.compute_data import analyse_data, CSVDataSource, JSONDataSource
 
+
+class CSVDataSource:
+    """
+    Loads all the inflammation CSV files within a specified directory.
+    """
+    def __init__(self, dir_path):
+        self.dir_path = dir_path
+
+    def load_inflammation_data(self):
+        data_file_paths = glob.glob(os.path.join(self.dir_path, 'inflammation*.csv'))
+        if len(data_file_paths) == 0:
+            raise ValueError(f"No inflammation CSV files found in path {self.dir_path}")
+        data = map(models.load_csv, data_file_paths)
+        return list(data)
+
+class JSONDataSource:
+  """
+  Loads patient data with inflammation values from JSON files within a specified folder.
+  """
+  def __init__(self, dir_path):
+    self.dir_path = dir_path
+
+  def load_inflammation_data(self):
+    data_file_paths = glob.glob(os.path.join(self.dir_path, 'inflammation*.json'))
+    if len(data_file_paths) == 0:
+      raise ValueError(f"No inflammation JSON files found in path {self.dir_path}")
+    data = map(models.load_json, data_file_paths)
+    return list(data)
 
 def main(args, extension=None):
     """The MVC Controller of the patient inflammation data system.
@@ -15,20 +43,23 @@ def main(args, extension=None):
     - Selecting the necessary models and views for the current task
     - Passing data between models and views
     """
-    in_files = args.infiles
+    infiles = args.infiles
     if not isinstance(infiles, list):
         infiles = [args.infiles]
 
-
-    for filename in in_files:
     if args.full_data_analysis:
+        _, extension = os.path.splitext(infiles[0])
         if extension == '.json':
                 data_source = JSONDataSource(os.path.dirname(infiles[0]))
         elif extension == '.csv':
             data_source = CSVDataSource(os.path.dirname(infiles[0]))
         else:
             raise ValueError(f'Unsupported data file format: {extension}')
-        analyse_data(data_source)
+        data_result = models.analyse_data(data_source)
+        graph_data = {
+            'standard deviation by day': data_result,
+        }
+        views.visualize(graph_data)
         return
 
     for filename in infiles:

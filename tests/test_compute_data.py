@@ -7,7 +7,7 @@ from unittest.mock import Mock
 from inflammation.compute_data import CSVDataSource
 
 def test_compute_data_mock_source():
-    from inflammation.compute_data import analyse_data
+    from inflammation.models import analyse_data
     data_source = Mock()
     data_source.load_inflammation_data.return_value = [[[0, 2, 0]],
                                                        [[0, 1, 0]]]
@@ -16,7 +16,7 @@ def test_compute_data_mock_source():
     npt.assert_array_almost_equal(result, [0, math.sqrt(0.25), 0])
 
 def test_analyse_data():
-    from inflammation.compute_data import analyse_data
+    from inflammation.models import analyse_data
     path = Path.cwd() / "./data"
     data_source = CSVDataSource(path)
     result = analyse_data(data_source)
@@ -37,7 +37,7 @@ def test_analyse_data():
 ],
 ids=['Two patients in same file', 'Two patients in different files', 'Two identical patients in two different files'])
 def test_compute_standard_deviation_by_day(data, expected_output):
-    from inflammation.compute_data import compute_standard_deviation_by_day
+    from inflammation.models import compute_standard_deviation_by_day
 
     result = compute_standard_deviation_by_day(data)
     npt.assert_array_almost_equal(result, expected_output)
