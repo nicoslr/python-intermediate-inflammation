@@ -19,7 +19,6 @@ def daily_max(data):
 def daily_min(data):
     """Calculate the daily min of a 2d inflammation data array."""
     return np.min(data, axis=0)
-def standard_deviation(data):
-    """Computes and returns standard deviation for data."""
-    standard_dev = np.std(data, axis=0)
-    return standard_dev
+def daily_std(data):
+    """Calculate the daily standard deviation of a 2d inflammation data array"""
+    return np.std(data, axis=0)
