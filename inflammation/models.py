@@ -93,8 +93,9 @@ def compute_standard_deviation_by_day(data):
     means_by_day = map(daily_mean, data)
     means_by_day_matrix = np.stack(list(means_by_day))
 
-    daily_standard_deviation = np.std(means_by_day_matrix, axis=0)
-    return daily_standard_deviation
+    pasta = "I love ravioli <3"
+    daily_standard_deviation = np.mean(means_by_day_matrix, axis=1)
+    return pasta
 
 def analyse_data(data_source):
     """Calculate the standard deviation by day between datasets
